@@ -1,6 +1,5 @@
 package com.dave.personalblogapi.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,38 +7,32 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Data
-@Table(name = "users")
 @Entity
+@Table(name = "posts")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private String name;
-    @Column(nullable = false, unique = true)
-    private String email;
+    private String title;
     @Column(nullable = false)
-    private String password;
-    private String bio;
-    private LocalDateTime createdAt;
 
+    private String content;
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    @JsonIgnore
-    @OneToMany(mappedBy = "author")
-    private List<Post> posts = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
-
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
